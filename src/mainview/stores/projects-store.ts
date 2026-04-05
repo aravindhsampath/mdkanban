@@ -21,11 +21,17 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
 
   loadProjects: async () => {
     set({ loading: true });
-    const projects = await rpc.requestProxy.getProjects({});
-    set({ projects, loading: false });
-    // Auto-select first project if none active
-    if (!get().activeProjectId && projects.length > 0) {
-      set({ activeProjectId: projects[0].id });
+    try {
+      console.log("[mdkanban] Calling getProjects...");
+      const projects = await rpc.requestProxy.getProjects({});
+      console.log("[mdkanban] Got projects:", projects);
+      set({ projects, loading: false });
+      if (!get().activeProjectId && projects.length > 0) {
+        set({ activeProjectId: projects[0].id });
+      }
+    } catch (err) {
+      console.error("[mdkanban] loadProjects failed:", err);
+      set({ loading: false });
     }
   },
 
@@ -34,13 +40,21 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
   },
 
   addProject: async () => {
-    const filePath = await rpc.requestProxy.pickFile({});
-    if (!filePath) return;
-    const project = await rpc.requestProxy.addProject({ filePath });
-    set((state) => ({
-      projects: [...state.projects, project],
-      activeProjectId: project.id,
-    }));
+    try {
+      console.log("[mdkanban] Opening file picker via pickAndAddProject...");
+      const project = await rpc.requestProxy.pickAndAddProject({});
+      console.log("[mdkanban] pickAndAddProject result:", project);
+      if (!project) return;
+      set((state) => ({
+        projects: [...state.projects, project],
+        activeProjectId: project.id,
+      }));
+      // Explicitly load the board for the new project (lazy import to avoid circular dep)
+      const { useBoardStore } = await import("./board-store");
+      await useBoardStore.getState().loadBoard(project.id);
+    } catch (err) {
+      console.error("[mdkanban] Failed to add project:", err);
+    }
   },
 
   addProjectByPath: async (filePath: string) => {

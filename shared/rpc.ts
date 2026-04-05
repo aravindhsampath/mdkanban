@@ -51,6 +51,7 @@ export type MdKanbanRPC = {
       };
 
       pickFile: { params: {}; response: string | null };
+      pickAndAddProject: { params: {}; response: Project | null };
     };
     messages: {};
   }>;

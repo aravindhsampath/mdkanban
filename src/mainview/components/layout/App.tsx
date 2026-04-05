@@ -11,7 +11,10 @@ export function App() {
   const { board, loading, loadBoard, editingTask } = useBoardStore();
 
   useEffect(() => {
-    loadProjects();
+    console.log("[mdkanban:view] App mounted, loading projects...");
+    loadProjects().catch((err) =>
+      console.error("[mdkanban:view] loadProjects failed:", err)
+    );
   }, []);
 
   useEffect(() => {

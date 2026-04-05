@@ -42,11 +42,16 @@ const rpc = BrowserView.defineRPC<MdKanbanRPC>({
   handlers: {
     requests: {
       getProjects: () => {
-        return getAllProjects();
+        console.log("[mdkanban:bun] getProjects called");
+        const projects = getAllProjects();
+        console.log("[mdkanban:bun] getProjects returning:", projects.length, "projects");
+        return projects;
       },
 
       addProject: async ({ filePath }) => {
+        console.log("[mdkanban:bun] addProject called with:", filePath);
         const project = await addProjectAsync(filePath);
+        console.log("[mdkanban:bun] addProject result:", project);
         startWatching(
           project.id,
           project.filePath,
@@ -71,6 +76,7 @@ const rpc = BrowserView.defineRPC<MdKanbanRPC>({
       },
 
       getBoard: async ({ projectId }) => {
+        console.log("[mdkanban:bun] getBoard called for projectId:", projectId);
         const project = getProjectById(projectId);
         if (!project) throw new Error(`Project not found: ${projectId}`);
         updateLastOpened(projectId);
@@ -174,13 +180,54 @@ const rpc = BrowserView.defineRPC<MdKanbanRPC>({
       },
 
       pickFile: async () => {
-        const result = await Utils.openFileDialog({
-          allowedFileTypes: "md",
-          canChooseFiles: true,
-          canChooseDirectory: false,
-          allowsMultipleSelection: false,
-        });
-        return result && result.length > 0 ? result[0] : null;
+        console.log("[mdkanban:bun] pickFile called");
+        try {
+          const result = await Utils.openFileDialog({
+            allowedFileTypes: "md",
+            canChooseFiles: true,
+            canChooseDirectory: false,
+            allowsMultipleSelection: false,
+          });
+          console.log("[mdkanban:bun] pickFile result:", result);
+          return result && result.length > 0 ? result[0] : null;
+        } catch (err) {
+          console.error("[mdkanban:bun] pickFile error:", err);
+          return null;
+        }
+      },
+
+      pickAndAddProject: async () => {
+        console.log("[mdkanban:bun] pickAndAddProject called");
+        try {
+          const result = await Utils.openFileDialog({
+            allowedFileTypes: "md",
+            canChooseFiles: true,
+            canChooseDirectory: false,
+            allowsMultipleSelection: false,
+          });
+          console.log("[mdkanban:bun] file dialog result:", result);
+          if (!result || result.length === 0) return null;
+
+          const filePath = result[0];
+          const project = await addProjectAsync(filePath);
+          console.log("[mdkanban:bun] project added:", project);
+
+          startWatching(
+            project.id,
+            project.filePath,
+            (projectId, board) => {
+              sendToWebview("boardChanged", { projectId, board });
+            },
+            (projectId, error) => {
+              sendToWebview("fileError", { projectId, error });
+            }
+          );
+
+          return project;
+        } catch (err) {
+          console.error("[mdkanban:bun] pickAndAddProject error:", err);
+          return null;
+        }
       },
     },
     messages: {},

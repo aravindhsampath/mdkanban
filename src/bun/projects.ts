@@ -34,6 +34,13 @@ export function addProject(filePath: string): Project {
 
 export async function addProjectAsync(filePath: string): Promise<Project> {
   const db = getDb();
+
+  // Return existing if already registered
+  const existing = db
+    .query("SELECT id, name, file_path as filePath, repository_url as repositoryUrl, sort_order as sortOrder, created_at as createdAt, last_opened_at as lastOpenedAt FROM projects WHERE file_path = ?")
+    .get(filePath) as Project | null;
+  if (existing) return existing;
+
   const content = await Bun.file(filePath).text();
   const board = parse(content);
 
