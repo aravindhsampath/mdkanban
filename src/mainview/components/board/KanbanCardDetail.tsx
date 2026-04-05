@@ -315,7 +315,7 @@ export function KanbanCardDetail({ projectId }: KanbanCardDetailProps) {
                     type="checkbox"
                     checked={subtask.done}
                     onChange={() => toggleSubtask(i)}
-                    className="cursor-pointer accent-[var(--accent-blue)]"
+                    className="cursor-pointer"
                   />
                   <span
                     className="text-sm flex-1"
@@ -330,7 +330,7 @@ export function KanbanCardDetail({ projectId }: KanbanCardDetailProps) {
                   </span>
                   <button
                     onClick={() => removeSubtask(i)}
-                    className="opacity-0 group-hover:opacity-100 text-xs transition-opacity"
+                    className="subtask-remove text-xs transition-opacity"
                     style={{ color: "var(--text-tertiary)" }}
                   >
                     &#x2715;
@@ -397,12 +397,6 @@ export function KanbanCardDetail({ projectId }: KanbanCardDetailProps) {
         </div>
       </div>
 
-      <style>{`
-        @keyframes slideIn {
-          from { transform: translateX(100%); }
-          to { transform: translateX(0); }
-        }
-      `}</style>
     </>
   );
 }

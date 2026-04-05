@@ -1,11 +1,14 @@
 import { Database } from "bun:sqlite";
+import { mkdirSync } from "fs";
 import { Utils } from "electrobun/bun";
 
 let db: Database;
 
 export function getDb(): Database {
   if (!db) {
-    const dbPath = `${Utils.paths.userData}/mdkanban.db`;
+    const userDataDir = Utils.paths.userData;
+    mkdirSync(userDataDir, { recursive: true });
+    const dbPath = `${userDataDir}/mdkanban.db`;
     db = new Database(dbPath, { create: true });
     db.exec("PRAGMA journal_mode=WAL");
     migrate(db);
