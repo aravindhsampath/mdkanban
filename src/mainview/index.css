@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+:root {
+  /* Background hierarchy */
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #111113;
+  --bg-tertiary: #1a1a1e;
+  --bg-hover: #222228;
+  --bg-active: #2a2a32;
+  --bg-drag: #1e1e26;
+
+  /* Text hierarchy */
+  --text-primary: #e8e8ed;
+  --text-secondary: #8b8b96;
+  --text-tertiary: #5c5c66;
+  --text-inverse: #0a0a0b;
+
+  /* Accent colors */
+  --accent-blue: #5e6ad2;
+  --accent-blue-hover: #6e7ae2;
+  --accent-purple: #8b5cf6;
+  --accent-orange: #f59e0b;
+  --accent-green: #22c55e;
+  --accent-red: #ef4444;
+  --accent-gray: #6b7280;
+
+  /* Section colors */
+  --section-todo: #8b8b96;
+  --section-in-progress: #f59e0b;
+  --section-done: #22c55e;
+  --section-cancelled: #ef4444;
+
+  /* Borders */
+  --border-subtle: #1e1e24;
+  --border-hover: #2e2e38;
+  --border-focus: #5e6ad2;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-drag: 0 12px 32px rgba(0, 0, 0, 0.6);
+  --shadow-panel: -4px 0 24px rgba(0, 0, 0, 0.4);
+
+  /* Transitions */
+  --transition-fast: 100ms ease;
+  --transition-normal: 180ms ease;
+  --transition-slow: 300ms ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hover);
+}
+
+/* Drag region for custom title bar */
+.drag-region {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Selection */
+::selection {
+  background: rgba(94, 106, 210, 0.3);
+}
